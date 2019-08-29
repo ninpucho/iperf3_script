@@ -2,8 +2,6 @@
 
 import iperf3
 import os
-# from os import system as clear
-# from os import path, mkdir
 from datetime import datetime
 from pprint import pprint
 
@@ -91,13 +89,10 @@ IPERF_TEST_RESULTS = {
 }
 
 
-
 def menu():
 	menu_index = [None] * len(GLOBAL_SETTINGS)
 
-
 	os.system('cls' if os.name == 'nt' else 'clear')
-
 	while True:
 		dt = datetime.now()
 		log_file = os.path.join(
@@ -120,14 +115,7 @@ def menu():
 		print("=" * 70)
 		print("Options: [Q]uit | [R]un")
 		print("-" * 70)
-		# print("Select A Server")
-		# print("-" * 70)
-		# i = 0
-		# for x in SERVER_LIST:
-		# 	print ("{0}: {1}".format(i,x))
-		# 	i += 1
 
-		# print("=" * 70)
 		selection = input("Please make a selection: ")
 		if selection.isnumeric():
 			selection = int(selection) - 1
@@ -179,6 +167,7 @@ def menu():
 
 			result = run_iperf3(GLOBAL_SETTINGS)
 
+			# If error we do not try to print anything to screen or log.
 			if result["parameter"]["error"]:
 				pass
 			else:
@@ -197,6 +186,7 @@ def menu():
 				for i in result["summary"].keys():
 					print(i + ": " + str(result["summary"][i]))
 
+				# Write information to LOG file.
 				with open(log_file, "a") as log:
 					log.write(("=" * 70) + "\n")
 					log.write("COMPLETE LOG\n")									
@@ -226,21 +216,11 @@ def menu():
 
 			input("Press enter to continue...")
 
-
-
-
-
 		os.system('cls' if os.name == 'nt' else 'clear')
 
 
 def run_iperf3(object):
 	client = iperf3.Client()
-	# Loop global settings
-	# for x in GLOBAL_SETTINGS.keys():
-	# 	if GLOBAL_SETTINGS[x].isnumeric():
-	# 		eval("client.{0} = {1}".format(x, GLOBAL_SETTINGS[x]))
-	# 	else:
-	# 		eval("client.{0} = '{1}'".format(x, GLOBAL_SETTINGS[x]))
 
 	client.duration = GLOBAL_SETTINGS["duration"]
 	client.server_hostname = GLOBAL_SETTINGS["server_hostname"]
@@ -267,10 +247,9 @@ def run_iperf3(object):
 	if result.error:
 		print(result.error)
 	else:
-
+		# Generate output file
 		for x in IPERF_TEST_RESULTS[GLOBAL_SETTINGS["protocol"]]:
 			value = eval("result.{0}".format(x))
-			# print ("{0}: {1}".format(x, value))
 			output["summary"][GLOBAL_SETTINGS["protocol"] + ":" + x] = value
 
 	return output
